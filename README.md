@@ -6,7 +6,7 @@
 ```{=html}
 <p align="center">
 ```
-`<img src="architecture-diagram.png" alt="Houses of Ice and Fire Architecture Diagram" width="100%">`{=html}
+`<img src="Architecture_dmg.png" alt="Houses of Ice and Fire Architecture Diagram" width="100%">`{=html}
 ```{=html}
 </p>
 ```
