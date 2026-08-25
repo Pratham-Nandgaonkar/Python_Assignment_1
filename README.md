@@ -1,7 +1,8 @@
 # 🐉 Houses of Ice and Fire
 
-> **A clean Python API integration project that retrieves, validates,
-> processes, sorts, and exports all Houses of Westeros and Essos.**
+> A clean, production-style Python API integration project that
+> retrieves, validates, processes, sorts, and exports all Houses of
+> Westeros and Essos.
 
 ```{=html}
 <p align="center">
@@ -10,186 +11,152 @@
 ```{=html}
 </p>
 ```
-```{=html}
-<p align="center">
-```
-`<b>`{=html}Python 3.x`</b>`{=html} • `<b>`{=html}Requests`</b>`{=html}
-• `<b>`{=html}REST API`</b>`{=html} •
-`<b>`{=html}Pagination`</b>`{=html} • `<b>`{=html}Data
-Validation`</b>`{=html} • `<b>`{=html}File Processing`</b>`{=html}
-```{=html}
-</p>
+
+------------------------------------------------------------------------
+
+## 📌 Assignment
+
+### Coding and Scenario Based Problem
+
+Build a Python application using the **An API of Ice and Fire** API to:
+
+1.  Create a list of **all houses and their regions** from the API.
+2.  Write the processed list into a **text file**.
+3.  Order all houses **alphabetically**.
+
+### API Endpoint
+
+``` text
+https://anapioficeandfire.com/api/houses
 ```
 
 ------------------------------------------------------------------------
 
-## 📌 Project Overview
+## ✨ Project Highlights
 
-**Houses of Ice and Fire** is a Python-based API integration project
-built using the **An API of Ice and Fire** public REST API.
-
-The assignment requires the application to:
-
--   Retrieve **all houses** and their regions from the API.
--   Handle the API's paginated response.
--   Extract only the required `name` and `region` fields.
--   Validate incoming API data.
--   Sort houses alphabetically.
--   Export the final dataset into a readable text file.
--   Handle API, network, validation, and file-related errors gracefully.
-
-The current API response contains **444 houses**, and the application
-retrieves the complete dataset rather than relying on the API's default
-first page of 10 records.
+-   🌐 REST API integration using `requests`
+-   📚 Retrieves **all available houses**, not only the first API page
+-   📄 Explicit API pagination with a page size of 100
+-   🛡️ Response and record validation
+-   🔤 Case-insensitive alphabetical sorting
+-   📝 Human-readable text output
+-   ⚠️ Exception handling for API/network/data failures
+-   🧩 Clean separation of retrieval, validation, processing, and output
+-   📁 Professional project structure
+-   🔒 Virtual environment excluded from Git
+-   📖 Complete documentation and architecture overview
 
 ------------------------------------------------------------------------
 
 ## 🏗️ Architecture
 
-The application follows a simple, maintainable pipeline:
+The application follows a simple data-processing pipeline:
 
 ``` text
-┌──────────────────────────┐
-│  An API of Ice and Fire  │
-│        REST API          │
-└────────────┬─────────────┘
-             │
-             │ Paginated Requests
-             ▼
-┌──────────────────────────┐
-│      Data Retrieval      │
-│ page=1, 2, 3 ...         │
-│ pageSize=100              │
-└────────────┬─────────────┘
-             │
-             │ All house records
-             ▼
-┌──────────────────────────┐
-│    Data Validation       │
-│ • Validate response      │
-│ • Validate records       │
-│ • Ignore malformed data  │
-└────────────┬─────────────┘
-             │
-             ▼
-┌──────────────────────────┐
-│    Data Processing       │
-│ • Extract name + region  │
-│ • Clean string values    │
-│ • Sort alphabetically    │
-└────────────┬─────────────┘
-             │
-             ▼
-┌──────────────────────────┐
-│      File Output         │
-│   output/houses.txt      │
-└──────────────────────────┘
+                 ┌──────────────────────────┐
+                 │   An API of Ice and Fire │
+                 │        REST API          │
+                 └────────────┬─────────────┘
+                              │
+                              │ HTTP GET
+                              ▼
+                 ┌──────────────────────────┐
+                 │      API Fetch Layer     │
+                 │  Pagination + Timeouts   │
+                 └────────────┬─────────────┘
+                              │
+                              ▼
+                 ┌──────────────────────────┐
+                 │     Validation Layer     │
+                 │ Response + Data Checks   │
+                 └────────────┬─────────────┘
+                              │
+                              ▼
+                 ┌──────────────────────────┐
+                 │    Processing Layer      │
+                 │ Name + Region Extraction │
+                 │   Alphabetical Sorting   │
+                 └────────────┬─────────────┘
+                              │
+                              ▼
+                 ┌──────────────────────────┐
+                 │      Output Layer        │
+                 │       houses.txt         │
+                 └──────────────────────────┘
 ```
 
-### 🔄 End-to-End Flow
-
-1.  Connect to the external REST API.
-2.  Request house records using pagination.
-3.  Continue requesting pages until the API returns no more records.
-4.  Combine all retrieved records into one collection.
-5.  Validate the API response structure.
-6.  Extract each house's `name` and `region`.
-7.  Clean and validate individual fields.
-8.  Sort houses alphabetically using case-insensitive comparison.
-9.  Write the final dataset to `output/houses.txt`.
-10. Display a clear execution summary in the terminal.
+The graphical architecture diagram is included at the top of this
+README.
 
 ------------------------------------------------------------------------
 
-## 🧠 Why Pagination?
+## 🔄 Application Workflow
 
-The API does **not** return every house in a single default request.
+### 1. Start Application
 
-A request to:
+Run the Python program from the project root.
 
-``` text
-/api/houses
-```
+### 2. Fetch API Data
 
-returns only the first page by default.
-
-The application therefore explicitly uses:
-
-``` text
-?page=1&pageSize=100
-?page=2&pageSize=100
-?page=3&pageSize=100
-...
-```
-
-Requests continue until the API returns an empty list.
-
-This is important because the assignment asks for **all houses**, not
-merely the first 10 records returned by the API.
-
-### Pagination Strategy
-
-``` python
-page = 1
-
-while True:
-    request page
-    receive houses
-
-    if no houses:
-        stop
-
-    add houses to collection
-    page += 1
-```
-
-This approach makes the application independent of the current total
-number of houses.
-
-------------------------------------------------------------------------
-
-## ✨ Key Features
-
-  Feature                   Implementation
-  ------------------------- --------------------------------------------
-  🌐 REST API Integration   `requests` library
-  📄 Pagination             `page` + `pageSize` parameters
-  🛡️ Response Validation    Verifies API returns a list
-  🧹 Data Cleaning          Strips unnecessary whitespace
-  🔎 Record Validation      Handles malformed records safely
-  🔤 Alphabetical Sorting   Case-insensitive `casefold()`
-  📁 File Generation        UTF-8 encoded text output
-  ⏱️ Request Timeout        10-second API timeout
-  🚨 Error Handling         Network, HTTP, JSON/data, and file errors
-  🧩 Modular Design         Separate functions for each responsibility
-
-------------------------------------------------------------------------
-
-## 🛠️ Tech Stack
-
-### Python 3.x
-
-Used as the primary programming language for API communication, data
-processing, validation, sorting, and file generation.
-
-### Requests
-
-Used for making HTTP GET requests to the external REST API.
-
-### pathlib
-
-Used for reliable, platform-independent file path management.
-
-### An API of Ice and Fire
-
-Public REST API providing data about the fictional world of *A Song of
-Ice and Fire*.
-
-**Endpoint:**
+The application sends HTTP `GET` requests to:
 
 ``` text
 https://anapioficeandfire.com/api/houses
 ```
+
+### 3. Handle Pagination
+
+The API is paginated. The application uses:
+
+``` python
+page_size = 100
+```
+
+and continues requesting pages until no more records are returned.
+
+Conceptually:
+
+``` text
+Page 1 → Page 2 → Page 3 → ... → Empty response → Stop
+```
+
+This ensures the program does not accidentally process only the first 10
+or 100 houses.
+
+### 4. Validate Data
+
+The application checks that:
+
+-   The HTTP request succeeds.
+-   The response contains valid JSON.
+-   The response is a list.
+-   House records have the expected structure.
+-   Required fields such as `name` and `region` are available.
+
+### 5. Extract Required Data
+
+Only assignment-relevant information is retained:
+
+``` text
+House Name
+Region
+```
+
+### 6. Sort
+
+All valid records are sorted alphabetically by house name.
+
+### 7. Generate Output
+
+The result is written to:
+
+``` text
+output/houses.txt
+```
+
+### 8. Report Completion
+
+The program prints a concise execution summary.
 
 ------------------------------------------------------------------------
 
@@ -206,79 +173,110 @@ houses-of-ice-and-fire/
 │
 ├── screenshots/
 │   ├── 01_program_execution.png
-│   └── 02_generated_output.png
+│   ├── final_program_execution.png
+│   └── image.png
 │
-├── architecture-diagram.png
+├── Architecture_dmg.png
 ├── README.md
 ├── requirements.txt
 ├── .gitignore
+│
 └── venv/
+    └── Local virtual environment - not committed to Git
 ```
 
-### Directory Responsibilities
-
-**`src/`**
-
-Contains the application's Python source code.
-
-**`output/`**
-
-Contains the generated text file containing sorted house information.
-
-**`screenshots/`**
-
-Contains evidence of successful program execution and generated output.
-
-**`requirements.txt`**
-
-Lists Python dependencies required by the project.
-
-**`.gitignore`**
-
-Prevents local virtual-environment and Python cache files from being
-committed.
+  File / Directory         Purpose
+  ------------------------ -------------------------------------------------
+  `src/houses.py`          Main Python application
+  `output/houses.txt`      Generated sorted house and region data
+  `screenshots/`           Execution/output screenshots
+  `Architecture_dmg.png`   System architecture diagram
+  `requirements.txt`       Python dependency list
+  `.gitignore`             Prevents unnecessary files from being committed
+  `README.md`              Project documentation
+  `venv/`                  Local virtual environment
 
 ------------------------------------------------------------------------
 
-## 🚀 Getting Started
+## 🛠️ Tech Stack
 
-### 1. Clone the repository
+  -----------------------------------------------------------------------
+  Technology                          Purpose
+  ----------------------------------- -----------------------------------
+  **Python 3.x**                      Core application development
 
-``` bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd houses-of-ice-and-fire
+  **Requests**                        HTTP requests and REST API
+                                      integration
+
+  **REST API**                        Source of Houses of Ice and Fire
+                                      data
+
+  **Pagination**                      Complete dataset retrieval
+
+  **Data Validation**                 Prevent malformed data from being
+                                      silently processed
+
+  **Exception Handling**              Graceful failure handling
+
+  **File I/O**                        Text file generation
+
+  **Git & GitHub**                    Version control and submission
+  -----------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## 📦 Dependencies
+
+The project uses:
+
+``` text
+requests
 ```
 
-### 2. Create a virtual environment
-
-``` bash
-python -m venv venv
-```
-
-### 3. Activate the virtual environment
-
-#### Windows Command Prompt
-
-``` cmd
-venv\Scripts\activate.bat
-```
-
-#### Windows PowerShell
-
-``` powershell
-venv\Scripts\Activate.ps1
-```
-
-> If PowerShell execution policies prevent activation, use Command
-> Prompt or activate the environment through another permitted shell.
-
-### 4. Install dependencies
+Install all dependencies with:
 
 ``` bash
 pip install -r requirements.txt
 ```
 
-### 5. Run the application
+------------------------------------------------------------------------
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Verify Python:
+
+``` bash
+python --version
+```
+
+### 1. Clone
+
+``` bash
+git clone https://github.com/Pratham-Nandgaonkar/Python_Assignment_1.git
+cd Python_Assignment_1
+```
+
+### 2. Create Virtual Environment
+
+``` bash
+python -m venv venv
+```
+
+### 3. Activate on Windows CMD
+
+``` cmd
+venv\Scripts\activate.bat
+```
+
+### 4. Install Dependencies
+
+``` bash
+pip install -r requirements.txt
+```
+
+### 5. Run
 
 ``` bash
 python src/houses.py
@@ -288,7 +286,7 @@ python src/houses.py
 
 ## 💻 Expected Console Output
 
-A successful execution looks like:
+A successful execution produces output similar to:
 
 ``` text
 =======================================================
@@ -305,163 +303,174 @@ Process completed successfully.
 =======================================================
 ```
 
-> The number of houses is dynamic and may change as the API dataset
-> changes.
+> The exact number of records may change if the API dataset is updated.
 
 ------------------------------------------------------------------------
 
-## 📄 Output Format
+## 📄 Output
 
-The application generates:
+Generated file:
 
 ``` text
 output/houses.txt
 ```
 
-Each line follows this format:
-
-``` text
-House Name - Region
-```
-
 Example:
 
 ``` text
-House Algood - The Westerlands
-House Allyrion of Godsgrace - Dorne
-House Amber - The North
-House Ambrose - The Reach
-House Appleton of Appleton - The Reach
-House Arryn of Gulltown - The Vale
-House Arryn of the Eyrie - The Vale
+House Name: House Algood
+Region: The Westerlands
+
+House Name: House Allyrion of Godsgrace
+Region: Dorne
+
+House Name: House Amber
+Region: The North
+
+House Name: House Ambrose
+Region: The Reach
 ```
 
-The records are ordered alphabetically by house name.
+The output contains the successfully retrieved and validated house
+records, ordered alphabetically.
 
 ------------------------------------------------------------------------
 
-## 🧩 Code Design
+## 🔢 Pagination Strategy
 
-The application is divided into focused functions so that each part has
-a clear responsibility.
+A single API response may contain only a limited number of records.
+Since the assignment requires **all houses**, pagination is necessary.
 
-### `fetch_houses()`
+The application uses:
 
-Responsible for:
+``` python
+page_size = 100
+```
 
--   Making API requests.
--   Handling pagination.
--   Validating the API response.
--   Combining all pages into one collection.
+The logic is conceptually:
 
-### `extract_house_data()`
+``` text
+Request page 1
+      ↓
+Process records
+      ↓
+Request page 2
+      ↓
+Process records
+      ↓
+Continue until empty response
+      ↓
+Complete dataset
+```
 
-Responsible for:
-
--   Validating individual records.
--   Extracting `name`.
--   Extracting `region`.
--   Cleaning string values.
-
-### `sort_houses()`
-
-Responsible for alphabetically sorting the extracted house records.
-
-### `save_to_file()`
-
-Responsible for:
-
--   Creating the output directory when required.
--   Writing the processed data to `houses.txt`.
--   Using UTF-8 encoding.
-
-### `main()`
-
-Coordinates the complete workflow and provides user-friendly execution
-feedback.
+The implementation does not hard-code a final page number, making it
+resilient to future changes in the API dataset size.
 
 ------------------------------------------------------------------------
 
-## 🛡️ Error Handling
+## 🛡️ Validation & Exception Handling
 
-The application handles several failure scenarios explicitly.
+The application uses defensive checks for external API failures.
 
-### API Timeout
+### Network/API failures
 
-``` text
-✗ API request timed out.
-```
-
-### Connection Failure
+Examples:
 
 ``` text
-✗ Could not connect to the API.
+Connection errors
+Timeouts
+HTTP errors
 ```
 
-### HTTP Error
+### Invalid responses
+
+Examples:
 
 ``` text
-✗ API returned an HTTP error: ...
+Invalid JSON
+Unexpected response structure
+Unexpected data types
 ```
 
-### Invalid API Data
+### Invalid records
+
+Examples:
 
 ``` text
-✗ Data validation error: ...
+Missing house name
+Missing region
+Malformed house objects
 ```
 
-### File System Error
-
-``` text
-✗ File operation failed: ...
-```
-
-This prevents the application from failing silently and provides
-meaningful feedback when something goes wrong.
+These checks prevent the application from silently producing misleading
+output.
 
 ------------------------------------------------------------------------
 
-## 🧪 Verification
+## 🔤 Sorting Logic
 
-The project can be verified using three important checks.
+House records are sorted alphabetically by name using a case-insensitive
+comparison.
 
-### Record Count
+Conceptually:
 
-``` bash
-python -c "from pathlib import Path; lines=Path('output/houses.txt').read_text(encoding='utf-8').splitlines(); print('Total lines:', len(lines))"
+``` python
+houses.sort(key=lambda house: house["name"].lower())
 ```
 
-Expected current result:
+This keeps ordering consistent regardless of capitalization.
+
+------------------------------------------------------------------------
+
+## 📊 Data Processing Pipeline
 
 ``` text
-Total lines: 444
+API Response
+     │
+     ▼
+Pagination
+     │
+     ▼
+Raw House Records
+     │
+     ▼
+Validation
+     │
+     ▼
+Name + Region Extraction
+     │
+     ▼
+Alphabetical Sorting
+     │
+     ▼
+Text File Generation
+     │
+     ▼
+output/houses.txt
 ```
 
-### Alphabetical Ordering
+------------------------------------------------------------------------
 
-``` bash
-python -c "from pathlib import Path; lines=Path('output/houses.txt').read_text(encoding='utf-8').splitlines(); print('Alphabetically sorted:', lines == sorted(lines, key=str.casefold))"
-```
+## 🧪 Testing
 
-Expected:
-
-``` text
-Alphabetically sorted: True
-```
-
-### Complete Program Test
+The application was tested by running:
 
 ``` bash
 python src/houses.py
 ```
 
-Expected:
+Successful execution verifies that:
+
+-   The API is reachable.
+-   Pagination retrieves the available dataset.
+-   House records are extracted.
+-   Data is sorted alphabetically.
+-   The output file is generated.
+
+Screenshots are stored in:
 
 ``` text
-✓ Successfully fetched ...
-✓ Extracted ...
-✓ Sorted houses alphabetically.
-✓ Saved results to output/houses.txt.
+screenshots/
 ```
 
 ------------------------------------------------------------------------
@@ -470,77 +479,80 @@ Expected:
 
 The repository includes screenshots demonstrating:
 
-1.  Successful API retrieval and processing.
-2.  Generated and alphabetically sorted output.
-
-``` text
-screenshots/
-├── 01_program_execution.png
-└── 02_generated_output.png
-```
+1.  Successful program execution.
+2.  Data processing.
+3.  Generated output.
+4.  The project execution environment.
 
 ------------------------------------------------------------------------
 
-## 🎯 Assignment Mapping
+## 🎯 Assignment Requirement Mapping
 
-  Assignment Requirement                  Implementation           Status
-  --------------------------------------- ------------------------ --------
-  Create list of all houses and regions   `extract_house_data()`   ✅
-  Retrieve data using API                 `fetch_houses()`         ✅
-  Retrieve all records                    Pagination               ✅
-  Write list to text file                 `save_to_file()`         ✅
-  Order houses alphabetically             `sort_houses()`          ✅
-  Use appropriate libraries               `requests`, `pathlib`    ✅
-  Follow code organization practices      Modular functions        ✅
-  Document the project                    This README              ✅
-  Provide output screenshots              `screenshots/`           ✅
+  -----------------------------------------------------------------------
+  Requirement                         Implementation
+  ----------------------------------- -----------------------------------
+  **a. Create a list of all houses    API retrieval + pagination +
+  and regions from API**              name/region extraction
 
-------------------------------------------------------------------------
+  **b. Write this list in a text      `output/houses.txt`
+  file**                              
 
-## 📈 Design Decisions
+  **c. Order all houses               Case-insensitive alphabetical
+  alphabetically**                    sorting
+  -----------------------------------------------------------------------
 
-### Why `requests`?
+### Engineering Practices
 
-It is a lightweight and widely used Python HTTP library that provides a
-clean interface for REST API communication.
-
-### Why pagination?
-
-The API returns data in pages. Pagination ensures the application
-retrieves the complete dataset rather than silently processing only the
-first page.
-
-### Why `pathlib`?
-
-`pathlib` provides a cleaner and more portable way to work with file
-paths across operating systems.
-
-### Why separate functions?
-
-Each function has one primary responsibility, making the code easier to
-understand, test, maintain, and extend.
-
-### Why validate API data?
-
-External APIs should not automatically be treated as perfectly reliable.
-Basic validation prevents malformed responses or records from causing
-unexpected application failures.
+  Practice                  Status
+  ------------------------- --------
+  Pagination                ✅
+  API validation            ✅
+  Exception handling        ✅
+  Request timeout           ✅
+  Clean project structure   ✅
+  Dependency management     ✅
+  Documentation             ✅
+  Architecture diagram      ✅
+  Git version control       ✅
+  Reproducible setup        ✅
 
 ------------------------------------------------------------------------
 
-## 🔮 Possible Future Improvements
+## 🧠 Key Concepts Demonstrated
 
-The current implementation intentionally stays focused on the assignment
-requirements. Possible extensions include:
+-   Python programming
+-   REST APIs
+-   HTTP GET requests
+-   JSON
+-   API pagination
+-   Data validation
+-   Exception handling
+-   Lists and dictionaries
+-   Lambda functions
+-   Sorting
+-   File handling
+-   Virtual environments
+-   Dependency management
+-   Git and GitHub
+-   Software project organization
 
--   [ ] Add automated unit tests with `pytest`.
--   [ ] Add structured logging.
--   [ ] Export data to CSV or JSON.
--   [ ] Add command-line arguments for page size and output location.
--   [ ] Add retry logic for temporary network failures.
--   [ ] Add API response caching.
--   [ ] Add a small interactive dashboard for exploring houses.
--   [ ] Add CI checks using GitHub Actions.
+------------------------------------------------------------------------
+
+## 📈 Possible Future Improvements
+
+The current implementation fully satisfies the assignment. Potential
+extensions include:
+
+-   Configurable API URL and page size
+-   Structured logging
+-   Retry logic with exponential backoff
+-   Unit tests using `pytest`
+-   GitHub Actions CI
+-   JSON/CSV export
+-   Command-line arguments
+-   Configurable output paths
+
+These are intentionally outside the assignment's core scope.
 
 ------------------------------------------------------------------------
 
@@ -548,36 +560,35 @@ requirements. Possible extensions include:
 
 **Pratham Nandgaonkar**
 
-Engineering Intern
-
-### Project
-
-**Houses of Ice and Fire**
-
-Built as a Python API integration and data-processing assignment.
+Python API Integration Assignment\
+Calsoft Internship
 
 ------------------------------------------------------------------------
 
-## 📜 License
+## 📜 Disclaimer
 
-This project was created for educational and professional evaluation
-purposes.
+This project uses the publicly available **An API of Ice and Fire**
+service for educational purposes.
+
+API data belongs to its respective source and may change over time.
 
 ------------------------------------------------------------------------
 
-```{=html}
-<p align="center">
+## ⭐ Project Status
+
+``` text
+████████████████████████████████████████  COMPLETE
 ```
-`<b>`{=html}⚔️ From API → Validation → Processing → Sorting → File
-Output ⚔️`</b>`{=html}
-```{=html}
-</p>
-```
-```{=html}
-<p align="center">
-```
-`<sub>`{=html}Built with Python and an unreasonable amount of enthusiasm
-for fictional medieval houses.`</sub>`{=html}
-```{=html}
-</p>
-```
+
+**Assignment 1 --- Houses of Ice and Fire**
+
+-   API Integration: ✅
+-   Complete Data Retrieval: ✅
+-   Pagination: ✅
+-   Validation: ✅
+-   Sorting: ✅
+-   Text Export: ✅
+-   Exception Handling: ✅
+-   Documentation: ✅
+-   Architecture Diagram: ✅
+-   GitHub Submission Ready: ✅
