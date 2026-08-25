@@ -4,13 +4,7 @@
 > retrieves, validates, processes, sorts, and exports all Houses of
 > Westeros and Essos.
 
-```{=html}
-<p align="center">
-```
-`<img src="Architecture_dmg.png" alt="Houses of Ice and Fire Architecture Diagram" width="100%">`{=html}
-```{=html}
-</p>
-```
+![Houses of Ice and Fire Architecture Diagram](Architecture_dmg.png)
 
 ------------------------------------------------------------------------
 
